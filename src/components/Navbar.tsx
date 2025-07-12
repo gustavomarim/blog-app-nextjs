@@ -30,7 +30,7 @@ export default async function Navbar() {
   const categories: Category[] = await response.json();
 
   const navigationLinks = [
-    { href: "#", label: "Home" },
+    { href: "/", label: "Home" },
     {
       label: "Categorias",
       submenu: true,
@@ -254,14 +254,14 @@ export default async function Navbar() {
             size="sm"
             className="text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50"
           >
-            <a href="#">Login</a>
+            <a href="/login">Login</a>
           </Button>
           <Button
             asChild
             size="sm"
             className="text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm"
           >
-            <a href="#">Criar Conta</a>
+            <a href="/login/register">Criar Conta</a>
           </Button>
         </div>
       </div>
