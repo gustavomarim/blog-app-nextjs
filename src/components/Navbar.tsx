@@ -15,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { getApiUrl } from "@/config/api";
 import { cn } from "@/lib/utils";
 
 interface Category {
@@ -24,8 +25,9 @@ interface Category {
 }
 
 export default async function Navbar() {
-  const response = await fetch("http://localhost:3001/categories");
-  const data: Category[] = await response.json();
+  const url = getApiUrl("categories");
+  const response = await fetch(url);
+  const categories: Category[] = await response.json();
 
   const navigationLinks = [
     { href: "#", label: "Home" },
@@ -33,7 +35,7 @@ export default async function Navbar() {
       label: "Categorias",
       submenu: true,
       type: "description",
-      items: data.map((category) => ({
+      items: categories.map((category) => ({
         href: `/categorias/${category.slug}`,
         label: category.name,
         description: "",
@@ -87,7 +89,10 @@ export default async function Navbar() {
                 </svg>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-64 p-1 md:hidden bg-white shadow-lg border border-blue-100">
+            <PopoverContent
+              align="start"
+              className="w-64 p-1 md:hidden bg-white shadow-lg border border-blue-100"
+            >
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => (
@@ -111,7 +116,10 @@ export default async function Navbar() {
                           </ul>
                         </>
                       ) : (
-                        <NavigationMenuLink href={link.href} className="py-1.5 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+                        <NavigationMenuLink
+                          href={link.href}
+                          className="py-1.5 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                        >
                           {link.label}
                         </NavigationMenuLink>
                       )}
@@ -141,7 +149,10 @@ export default async function Navbar() {
           </Popover>
           {/* Main nav */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-blue-600 hover:text-blue-700 transition-colors">
+            <a
+              href="#"
+              className="text-blue-600 hover:text-blue-700 transition-colors"
+            >
               <Logo />
             </a>
             {/* Navigation menu */}
@@ -237,10 +248,19 @@ export default async function Navbar() {
         </div>
         {/* Right side */}
         <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm" className="text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+          >
             <a href="#">Login</a>
           </Button>
-          <Button asChild size="sm" className="text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm">
+          <Button
+            asChild
+            size="sm"
+            className="text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm"
+          >
             <a href="#">Criar Conta</a>
           </Button>
         </div>

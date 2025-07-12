@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronRight, Mail, Newspaper, Star, TrendingUp } from "lucide-react";
+import { getApiUrl } from "@/config/api";
+import {
+  Calendar,
+  ChevronRight,
+  Mail,
+  Newspaper,
+  Star,
+  TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
 
 interface Post {
@@ -17,7 +25,8 @@ interface Post {
 }
 
 export default async function Home() {
-  const response = await fetch("http://localhost:3001/posts");
+  const url = getApiUrl("posts");
+  const response = await fetch(url);
   const posts: Post[] = await response.json();
 
   return (
@@ -31,37 +40,50 @@ export default async function Home() {
                 <Newspaper className="w-10 h-10 text-blue-600" />
               </div>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Bem-vindo ao Loop Infinito
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
-              No Loop Infinito, você encontra conteúdos sobre o universo tech — da
-              programação ao impacto da tecnologia no dia a dia. Tendências,
+              No Loop Infinito, você encontra conteúdos sobre o universo tech —
+              da programação ao impacto da tecnologia no dia a dia. Tendências,
               tutoriais, análises e reflexões para quem vive conectado ou apenas
               quer entender melhor o mundo digital.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg">
+              <Button
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+              >
                 Explorar Artigos
                 <ChevronRight className="ml-2 w-4 h-4" />
               </Button>
-              <Button variant="outline" size="lg" className="border-blue-200 hover:bg-blue-50">
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-blue-200 hover:bg-blue-50"
+              >
                 Sobre o Blog
               </Button>
             </div>
-            
+
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-blue-100">
-                <div className="text-3xl font-bold text-blue-600 mb-2">{posts.length}</div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">
+                  {posts.length}
+                </div>
                 <div className="text-gray-600">Artigos</div>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-purple-100">
-                <div className="text-3xl font-bold text-purple-600 mb-2">5+</div>
+                <div className="text-3xl font-bold text-purple-600 mb-2">
+                  5+
+                </div>
                 <div className="text-gray-600">Categorias</div>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-green-100">
-                <div className="text-3xl font-bold text-green-600 mb-2">1k+</div>
+                <div className="text-3xl font-bold text-green-600 mb-2">
+                  1k+
+                </div>
                 <div className="text-gray-600">Leitores</div>
               </div>
             </div>
@@ -79,12 +101,15 @@ export default async function Home() {
                 Postagens Recentes
               </h2>
             </div>
-            <Button variant="outline" className="hidden sm:flex border-blue-200 hover:bg-blue-50">
+            <Button
+              variant="outline"
+              className="hidden sm:flex border-blue-200 hover:bg-blue-50"
+            >
               Ver Todos
               <ChevronRight className="ml-2 w-4 h-4" />
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post, index) => (
               <Link
@@ -112,7 +137,9 @@ export default async function Home() {
                     <div className="flex items-center justify-between pt-4 border-t border-blue-100">
                       <div className="flex items-center gap-2 text-gray-500 text-sm">
                         <Calendar className="w-4 h-4" />
-                        <span>{new Date(post.date).toLocaleDateString('pt-BR')}</span>
+                        <span>
+                          {new Date(post.date).toLocaleDateString("pt-BR")}
+                        </span>
                       </div>
                       <span className="text-blue-600 text-sm font-medium group-hover:text-blue-700">
                         Ler mais →
@@ -123,7 +150,7 @@ export default async function Home() {
               </Link>
             ))}
           </div>
-          
+
           {posts.length === 0 && (
             <div className="text-center py-16">
               <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-full p-6 w-20 h-20 mx-auto mb-6">
@@ -151,7 +178,8 @@ export default async function Home() {
               Fique por dentro das novidades
             </h2>
             <p className="text-blue-100 text-lg mb-8">
-              Receba nossas melhores postagens e insights tech diretamente no seu e-mail.
+              Receba nossas melhores postagens e insights tech diretamente no
+              seu e-mail.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
