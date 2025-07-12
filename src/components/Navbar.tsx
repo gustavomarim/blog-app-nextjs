@@ -15,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { getApiUrl } from "@/config/api";
 import { cn } from "@/lib/utils";
 
 interface Category {
@@ -24,8 +25,9 @@ interface Category {
 }
 
 export default async function Navbar() {
-  const response = await fetch("http://localhost:3001/categories");
-  const data: Category[] = await response.json();
+  const url = getApiUrl("categories");
+  const response = await fetch(url);
+  const categories: Category[] = await response.json();
 
   const navigationLinks = [
     { href: "#", label: "Home" },
@@ -33,7 +35,7 @@ export default async function Navbar() {
       label: "Categorias",
       submenu: true,
       type: "description",
-      items: data.map((category) => ({
+      items: categories.map((category) => ({
         href: `/categorias/${category.slug}`,
         label: category.name,
         description: "",
@@ -48,15 +50,15 @@ export default async function Navbar() {
   ];
 
   return (
-    <header className="border-b px-4 md:px-6">
-      <div className="flex h-16 items-center justify-between gap-4">
+    <header className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100 backdrop-blur-sm">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
         {/* Left side */}
         <div className="flex items-center gap-2">
           {/* Mobile menu trigger */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                className="group size-8 md:hidden"
+                className="group size-8 md:hidden text-blue-600 hover:text-blue-700 hover:bg-blue-100"
                 variant="ghost"
                 size="icon"
               >
@@ -87,14 +89,17 @@ export default async function Navbar() {
                 </svg>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-64 p-1 md:hidden">
+            <PopoverContent
+              align="start"
+              className="w-64 p-1 md:hidden bg-white shadow-lg border border-blue-100"
+            >
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => (
                     <NavigationMenuItem key={index} className="w-full">
                       {link.submenu ? (
                         <>
-                          <div className="text-muted-foreground px-2 py-1.5 text-xs font-medium">
+                          <div className="text-blue-600 px-2 py-1.5 text-xs font-medium">
                             {link.label}
                           </div>
                           <ul>
@@ -102,7 +107,7 @@ export default async function Navbar() {
                               <li key={itemIndex}>
                                 <NavigationMenuLink
                                   href={item.href}
-                                  className="py-1.5"
+                                  className="py-1.5 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                                 >
                                   {item.label}
                                 </NavigationMenuLink>
@@ -111,7 +116,10 @@ export default async function Navbar() {
                           </ul>
                         </>
                       ) : (
-                        <NavigationMenuLink href={link.href} className="py-1.5">
+                        <NavigationMenuLink
+                          href={link.href}
+                          className="py-1.5 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                        >
                           {link.label}
                         </NavigationMenuLink>
                       )}
@@ -130,7 +138,7 @@ export default async function Navbar() {
                           <div
                             role="separator"
                             aria-orientation="horizontal"
-                            className="bg-border -mx-1 my-1 h-px w-full"
+                            className="bg-blue-200 -mx-1 my-1 h-px w-full"
                           />
                         )}
                     </NavigationMenuItem>
@@ -141,7 +149,10 @@ export default async function Navbar() {
           </Popover>
           {/* Main nav */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
+            <a
+              href="#"
+              className="text-blue-600 hover:text-blue-700 transition-colors"
+            >
               <Logo />
             </a>
             {/* Navigation menu */}
@@ -151,10 +162,10 @@ export default async function Navbar() {
                   <NavigationMenuItem key={index}>
                     {link.submenu ? (
                       <>
-                        <NavigationMenuTrigger className="text-muted-foreground hover:text-primary bg-transparent px-2 py-1.5 font-medium *:[svg]:-me-0.5 *:[svg]:size-3.5">
+                        <NavigationMenuTrigger className="text-gray-700 hover:text-blue-600 bg-transparent px-2 py-1.5 font-medium *:[svg]:-me-0.5 *:[svg]:size-3.5 transition-colors">
                           {link.label}
                         </NavigationMenuTrigger>
-                        <NavigationMenuContent className="data-[motion=from-end]:slide-in-from-right-16! data-[motion=from-start]:slide-in-from-left-16! data-[motion=to-end]:slide-out-to-right-16! data-[motion=to-start]:slide-out-to-left-16! z-50 p-1">
+                        <NavigationMenuContent className="data-[motion=from-end]:slide-in-from-right-16! data-[motion=from-start]:slide-in-from-left-16! data-[motion=to-end]:slide-out-to-right-16! data-[motion=to-start]:slide-out-to-left-16! z-50 p-1 bg-white shadow-xl border border-blue-100">
                           <ul
                             className={cn(
                               link.type === "description"
@@ -166,7 +177,7 @@ export default async function Navbar() {
                               <li key={itemIndex}>
                                 <NavigationMenuLink
                                   href={item.href}
-                                  className="py-1.5"
+                                  className="py-1.5 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                                 >
                                   {/* Display icon if present */}
                                   {link.type === "icon" && "icon" in item && (
@@ -174,21 +185,21 @@ export default async function Navbar() {
                                       {item.icon === "BookOpenIcon" && (
                                         <BookOpenIcon
                                           size={16}
-                                          className="text-foreground opacity-60"
+                                          className="text-blue-600"
                                           aria-hidden="true"
                                         />
                                       )}
                                       {item.icon === "LifeBuoyIcon" && (
                                         <LifeBuoyIcon
                                           size={16}
-                                          className="text-foreground opacity-60"
+                                          className="text-blue-600"
                                           aria-hidden="true"
                                         />
                                       )}
                                       {item.icon === "InfoIcon" && (
                                         <InfoIcon
                                           size={16}
-                                          className="text-foreground opacity-60"
+                                          className="text-blue-600"
                                           aria-hidden="true"
                                         />
                                       )}
@@ -203,7 +214,7 @@ export default async function Navbar() {
                                       <div className="font-medium">
                                         {item.label}
                                       </div>
-                                      <p className="text-muted-foreground line-clamp-2 text-xs">
+                                      <p className="text-gray-600 line-clamp-2 text-xs">
                                         {item.description}
                                       </p>
                                     </div>
@@ -224,7 +235,7 @@ export default async function Navbar() {
                     ) : (
                       <NavigationMenuLink
                         href={link.href}
-                        className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                        className="text-gray-700 hover:text-blue-600 py-1.5 font-medium transition-colors"
                       >
                         {link.label}
                       </NavigationMenuLink>
@@ -237,10 +248,19 @@ export default async function Navbar() {
         </div>
         {/* Right side */}
         <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm" className="text-sm">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+          >
             <a href="#">Login</a>
           </Button>
-          <Button asChild size="sm" className="text-sm">
+          <Button
+            asChild
+            size="sm"
+            className="text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm"
+          >
             <a href="#">Criar Conta</a>
           </Button>
         </div>
