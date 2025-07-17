@@ -73,6 +73,7 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
       });
 
       if (response.status === 401) {

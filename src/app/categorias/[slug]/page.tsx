@@ -49,7 +49,7 @@ const CategoryPage = async ({ params }: PageParams) => {
       date: data[0]?.date || new Date().toISOString(),
       description: data[0]?.description || "Sem descrição disponível",
       title: data[0]?.title || "Sem título",
-      _id: data[0]._id || "",
+      _id: data[0]?._id || "",
     };
 
     const contentLength = safeData.content.length;
