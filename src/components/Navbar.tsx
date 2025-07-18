@@ -1,4 +1,13 @@
-import { BookOpenIcon, InfoIcon, LifeBuoyIcon } from "lucide-react";
+"use client";
+
+import {
+  BookOpenIcon,
+  InfoIcon,
+  LifeBuoyIcon,
+  LogOut,
+  User,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 import Logo from "@/components/navbar-components/logo";
 import { Button } from "@/components/ui/button";
@@ -16,6 +25,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getApiUrl } from "@/config/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 interface Category {
@@ -24,13 +34,27 @@ interface Category {
   slug: string;
 }
 
-export default async function Navbar() {
-  const url = getApiUrl("categories");
-  const response = await fetch(url);
-  const categories: Category[] = await response.json();
+export default function Navbar() {
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const url = getApiUrl("categories");
+        const response = await fetch(url);
+        const categoriesData: Category[] = await response.json();
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Erro ao carregar categorias:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const navigationLinks = [
-    { href: "#", label: "Home" },
+    { href: "/", label: "Home" },
     {
       label: "Categorias",
       submenu: true,
@@ -48,6 +72,14 @@ export default async function Navbar() {
       items: [{ href: "#", label: "Sobre Nós", icon: "InfoIcon" }],
     },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  };
 
   return (
     <header className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100 backdrop-blur-sm">
@@ -246,23 +278,67 @@ export default async function Navbar() {
             </NavigationMenu>
           </div>
         </div>
+
         {/* Right side */}
         <div className="flex items-center gap-2">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-          >
-            <a href="#">Login</a>
-          </Button>
-          <Button
-            asChild
-            size="sm"
-            className="text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm"
-          >
-            <a href="#">Criar Conta</a>
-          </Button>
+          {isLoading ? (
+            // Loading state
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+            </div>
+          ) : isAuthenticated && user ? (
+            // User is logged in
+            <div className="flex items-center gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="hidden md:inline">{user.name}</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-48">
+                  <div className="space-y-2">
+                    <div className="px-2 py-1 border-b">
+                      <p className="text-sm font-medium">{user.name}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sair
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          ) : (
+            // User is not logged in
+            <>
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+              >
+                <a href="/login">Login</a>
+              </Button>
+              <Button
+                asChild
+                size="sm"
+                className="text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm"
+              >
+                <a href="/login/register">Criar Conta</a>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>
