@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async (): Promise<void> => {
     try {
       await fetch(`${getApiUrl("users")}/logout`, {
-        method: "POST",
+        method: "GET",
         credentials: "include",
       });
     } catch (error) {
