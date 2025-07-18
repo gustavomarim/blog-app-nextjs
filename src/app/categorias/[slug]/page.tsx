@@ -12,9 +12,9 @@ import {
 import Link from "next/link";
 
 type PageParams = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 export interface PostResponse {
@@ -27,7 +27,7 @@ export interface PostResponse {
 }
 
 const CategoryPage = async ({ params }: PageParams) => {
-  const { slug } = params;
+  const { slug } = await params;
 
   try {
     const url = getApiUrl("posts");
