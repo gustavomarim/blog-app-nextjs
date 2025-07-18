@@ -2,10 +2,10 @@
 
 import InputField from "@/components/login/register/input-field";
 import { Button } from "@/components/ui/button";
-import { getApiUrl } from "@/config/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { CheckCircle, Lock, Mail, User } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export interface FormData {
@@ -20,6 +20,10 @@ export interface FormErrors {
 
 const LoginPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login } = useAuth();
+
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -29,11 +33,12 @@ const LoginPage = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string>("");
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!formData.email.trim()) {
       newErrors.email = "Email é obrigatório";
     } else if (!emailRegex.test(formData.email)) {
@@ -52,8 +57,13 @@ const LoginPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
+    // Limpa erros quando o usuário digita
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+
+    if (loginError) {
+      setLoginError("");
     }
   };
 
@@ -63,33 +73,19 @@ const LoginPage = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-
-    const loginUrl = `${getApiUrl("users")}/login`;
+    setLoginError("");
 
     try {
-      const response = await fetch(loginUrl, {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const success = await login(formData.email, formData.password);
 
-      if (response.status === 401) {
-        const data = await response.json();
-        alert(data.message);
-        return;
+      if (success) {
+        router.push(redirectTo);
+      } else {
+        setLoginError("Email ou senha incorretos");
       }
-
-      alert("Login realizado com sucesso!");
-
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      alert("Erro ao fazer login. Tente novamente.");
+      setLoginError("Erro ao fazer login. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -114,6 +110,13 @@ const LoginPage = () => {
         {/* Form */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-blue-100 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Erro geral de login */}
+            {loginError && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
+                {loginError}
+              </div>
+            )}
+
             <InputField
               name="email"
               type="email"
