@@ -19,8 +19,6 @@ export default function NewsletterForm() {
     }
   }, [state.ok]);
 
-  console.log("🚀 ~ NewsletterForm ~ state:", state);
-
   return (
     <div className="w-full max-w-md mx-auto">
       <form
