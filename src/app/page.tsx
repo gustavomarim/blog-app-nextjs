@@ -181,16 +181,22 @@ export default async function Home() {
               Receba nossas melhores postagens e insights tech diretamente no
               seu e-mail.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
                 type="email"
+                name="email"
+                id="email"
+                required
                 placeholder="seu@email.com"
                 className="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-white/50 text-gray-900"
               />
-              <Button className="bg-white text-blue-600 hover:bg-gray-100 font-semibold">
+              <Button
+                type="submit"
+                className="bg-white text-blue-600 h-auto cursor-pointer hover:bg-gray-100 font-semibold"
+              >
                 Inscrever-se
               </Button>
-            </div>
+            </form>
             <p className="text-blue-100 text-sm mt-4">
               Sem spam. Apenas conteúdo de qualidade.
             </p>
